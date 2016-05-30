@@ -25,15 +25,17 @@ class MU:
 			return self.content
 
 	#Changes the content of the MU depending on the permissions granted for "who"
-	def write(self, who, datatype, content):
+	def write(self, who, NewDataType, newContent):
 		if who != "127.0.0.1":
 			if ((self.permissions == "1011") or (self.permissions == "1111")):
-				self.content = content
+				self.content = newContent
+				self.datatype = NewDataType
 			else:
 				print "No permissions granted for this Memory Unit"
 		else:
 			if ((self.permissions == "1100") or (self.permissions == "1110") or (self.permissions == "1111")):
-				self.content = content
+				self.content = newContent
+				self.datatype = NewDataType
 			else:
 				print "I have no permissions to write this Memory Unit"
 
