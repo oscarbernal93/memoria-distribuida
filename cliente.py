@@ -52,7 +52,7 @@ class MU:
 # La memoria es un diccionario de Unidades de Memoria (MU)
 memory = {}
 
-opciones = {
+optionsList = {
 	1:"Read data from memory",
 	2:"Write data into memory",
 	3:"Change permits of a data in memory",
@@ -71,20 +71,35 @@ opciones = {
 # - Cada nodo crear una pagina en su propia memoria
 
 def menu():
-	print "These are the options that you have access:"
-	for opcion in opciones:
-		print opcion, " - ", opciones[opcion]
-
+	# Se listan las opciones disponibles
+	print "\nThese are the options that you have access:"
+	for option in optionsList:
+		print option, " - ", optionsList[option]
+	# Se lee el teclado
 	print "\nPlease select an option"
-	variable = int(raw_input(">>> "))
-	if variable in opciones:
-		return variable
+	foo = raw_input(">>> ")
+	# Se intenta convertir a int el valor leido
+	bar = 0
+	try:
+		bar = int(foo)
+	except Exception, e:
+		print "Please, you can do it better, Respect Yourself!"
+		exit()
+	# Se busca el valor en la lista y se retorna
+	if bar in optionsList:
+		return bar
+	# Si falla, reimprime el menu
 	else:
 		print "Possibly something is wrong with your keyboard"
-		print "Apparently you chose a wrong option"
+		print "Apparently you chose a wrong option, try again"
 		menu()
-
+	
+# Se imprime el encabezado de bienvenida
+print "\n*********"
+print "*  DMC  *"
+print "*********\n"
 print "Hello, This is the Distributed Memory Client"
 print "You don't know how or where the info is stored"
-opcion = menu()
-print ("You choose: " + opciones[opcion])
+# Se Imprime el menu
+option = menu()
+print ("You choose: " + optionsList[option])
