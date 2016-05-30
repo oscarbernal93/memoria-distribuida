@@ -3,11 +3,16 @@ import sys
 import threading
 
 # Definicion de Variables Globales
-_MEMORYSIZE = 4 											#Un maximo de 4 bloques
-peerSocket = "" 											#Socket Handler
-HOST = ''													#Host IP info 
-PORT = 10000												#Host Port info
-servData = (HOST,PORT)										#Tuple with Host Information, useful for the "UDP sending code" reading
+_MEMORYSIZE = 4 									#Un maximo de 4 bloques
+_PRIVATECONECTION = ("",12834)						#Tuple with Host Information, useful for the "UDP sending code" reading
+_PUBLICCONECTION = ("239.255.255.8",12835)			#Tuple with Host for Multicast Messaging
+_DATASIZE = 2048									#Size of data 
+
+# Inicializacion de Socket
+privateSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+publicSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+privateSocket.bind(_PRIVATECONECTION)
+publicSocket.bind(_PUBLICCONECTION)
 
 #-------------------------------------------------------------------------------------------
 
@@ -65,7 +70,15 @@ class CC:
 			self.memory[name]=memUnit
 		else:
 			# si la memoria esta llena pido al todos los nodos conectados disponibilidad de memoria
+			sent = publicSocket.sendTo("1n33dm3msp4c3", _PUBLICCONECTION)
+			recieved, node = privateSocket.recvfrom(_DATASIZE)
+			if recieved = "1h4v3m3msp4c3":
+				print "Somebody have space"
+				print node
+			else:
+				print "There is no memeory space available"
 			pass
+			print "end"
 
 	def createMemUnit(self, who, name):
 		if len(self.memory) < _MEMORYSIZE:
@@ -121,25 +134,11 @@ def chooseMenuAction():
 			print "Possibly something is wrong with your keyboard"
 			print "Apparently you chose a wrong option, try again"
 
-def petitionThread():
-	while True:
-		command = chooseMenuAction()
-		sent = peerSocket.sendTo(command, servData)
-		if command == 5:
-			break
-
 #Inicializa el servidor, su configuracion y los hilos que escuchan y envian mensajes
 def startServer():
-	peerSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	s.bind(servData)
 	#aqui se inicializan los hilos petition y listening
-	tpet = threading.Thread(target=petitionThread)
 	tlist = threading.Thread(target=listeningThread)
-	
-	tpet.start()
 	tlist.start()
-	
-	tpet.join()
 	tlist.join()
 
 # Cada nodo debe tener espacios de memoria disponibles (paginas) 
