@@ -67,12 +67,15 @@ optionsList = {
 }
 
 def listeningThread():
+	'''
+	TODO: Matar el proceso desde afuera
 	while True:
 		recieved, server = peerSocket.recvfrom(4096)
 		print "data: " + recieved
 		if recibido == "close1qazxsw2":
 			peerSocket.close()
 			break
+	'''
 
 # Devuelve la seleccion hecha en un menu de opciones
 def chooseMenuAction():
@@ -103,7 +106,7 @@ def petitionThread():
 	while True:
 		command = chooseMenuAction()
 		sent = peerSocket.sendTo(command, servData)
-		if command == "close":
+		if command == 5:
 			break
 
 #Inicializa el servidor, su configuracion y los hilos que escuchan y envian mensajes
@@ -113,6 +116,12 @@ def startServer():
 	#aqui se inicializan los hilos petition y listening
 	tpet = threading.Thread(target=petitionThread)
 	tlist = threading.Thread(target=listeningThread)
+	
+	tpet.start()
+	tlist.start()
+	
+	tpet.join()
+	tlist.join()
 
 # Cada nodo debe tener espacios de memoria disponibles (paginas) 
 # a los que cada uno de los nodos podra acceder de manera 
