@@ -1,11 +1,61 @@
 import socket
 
+# Definicion de Globales
+_MEMORYSIZE = 4
+
+class MU:
+
+	def __init__(self):
+		self.name = ""
+		self.datatype = ""
+		self.content = ""
+		self.permissions = ""
+		self.owner = ""
+		self.accesses = []
+		self.restrictions = []
+
+	#Returns the content to the user which asked for it, depending on the permissions granted for "who"
+	def read(self, who):
+		if who != "127.0.0.1":
+			if ((self.permissions == "1110") or (self.permissions == "1011") or (self.permissions == "1010")):
+				return self.content
+			else:
+				print "No permissions granted for this Memory Unit"
+		else:
+			return self.content
+
+	#Changes the content of the MU depending on the permissions granted for "who"
+	def write(self, who, datatype, content):
+		if who != "127.0.0.1":
+			if ((self.permissions == "1011") or (self.permissions == "1111")):
+				self.content = content
+			else:
+				print "No permissions granted for this Memory Unit"
+		else:
+			if ((self.permissions == "1100") or (self.permissions == "1110") or (self.permissions == "1111")):
+				self.content = content
+			else:
+				print "I have no permissions to write this Memory Unit"
+
+	def chmod(self, who, newPermissions):
+		if who == "127.0.0.1":
+			self.permissions = newPermissions
+		else:
+			print "You don't have enough rights to do this!"
+
+
+
+
+
+# La memoria es un diccionario de Unidades de Memoria (MU)
+memory = {}
+
 opciones = {
-	1:"Leer un dato de memoria",
-	2:"Escribir un dato en la memoria",
-	3:"Cambiar permisos de un dato de la memoria",
-	4:"Crear un dato en la memoria",
-	5:"Salir",
+	1:"Read data from memory",
+	2:"Write data into memory",
+	3:"Change permits of a data in memory",
+	4:"Create a data in memory",
+	5:"Exit",
 }
 
 # Cada nodo debe tener espacios de memoria disponibles (paginas) 
@@ -17,16 +67,6 @@ opciones = {
 # - Puede escribir un dato en la memoria Posicion de memoria, Tipo de dato, Contenido, Quien hace la peticion, y lo hace con los permisos de la pagina
 # - Cada nodo puede cambiar los permisos de sus paginas
 # - Cada nodo crear una pagina en su propia memoria
-
-
-
-def listen_petition():
-	while True:
-		received, server = s.recvfrom(4096)
-
-def send_petition():
-
-def start_server():
 
 def menu():
 	print "Esto es lo que puede hacer aqui:"
