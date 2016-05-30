@@ -2,9 +2,17 @@ import socket
 import sys
 import threading
 
+# Definicion de Variables Globales
+_MEMORYSIZE = 4 											#Un maximo de 4 bloques
+peerSocket = "" 											#Socket Handler
+HOST = ''													#Host IP info 
+PORT = 10000												#Host Port info
+servData = (HOST,PORT)										#Tuple with Host Information, useful for the "UDP sending code" reading
+
+#-------------------------------------------------------------------------------------------
+
 #Memory Unit Class, It's the core of the shared memory system
 class MU:
-
 	def __init__(self):
 		self.name = ""
 		self.datatype = ""
@@ -46,17 +54,8 @@ class MU:
 		else:
 			print "You don't have enough rights to do this!"
 
+
 #-------------------------------------------------------------------------------------------
-
-# Definicion de Variables Globales
-_MEMORYSIZE = 4 											#Un maximo de 4 bloques
-peerSocket = "" 											#Socket Handler
-HOST = ''													#Host IP info 
-PORT = 10000												#Host Port info
-servData = (HOST,PORT)										#Tuple with Host Information, useful for the "UDP sending code" reading
-
-# La memoria es un diccionario de Unidades de Memoria (MU)
-memory = {}
 
 # Acciones para el menu
 optionsList = {
