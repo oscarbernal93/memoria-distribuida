@@ -14,18 +14,17 @@ servData = (HOST,PORT)										#Tuple with Host Information, useful for the "UD
 #Memory Unit Class, It's the core of the shared memory system
 class MU:
 	def __init__(self):
-		self.name = ""
-		self.datatype = ""
+		self.datatype = "None"
 		self.content = ""
-		self.permissions = ""
-		self.owner = ""
+		self.permissions = "1110"
+		self.owner = "127.0.0.1"
 		self.accesses = []
 		self.restrictions = []
 
 	#Returns the content to the user which asked for it, depending on the permissions granted for "who"
 	def read(self, who):
 		if who != self.owner:
-			if ((self.permissions == "1110") or (self.permissions == "1011") or (self.permissions == "1010")):
+			if (self.permissions[2] == "1"):
 				return self.content
 			else:
 				print "No permissions granted for this Memory Unit"
@@ -35,17 +34,16 @@ class MU:
 	#Changes the content of the MU depending on the permissions granted for "who"
 	def write(self, who, NewDataType, newContent):
 		if who != self.owner:
-			if ((self.permissions == "1011") or (self.permissions == "1111")):
+			if (self.permissions[3] == "1"):
 				self.content = newContent
 				self.datatype = NewDataType
 			else:
 				print "No permissions granted for this Memory Unit"
+		elif (self.permissions[1] == "1"):
+			self.content = newContent
+			self.datatype = NewDataType
 		else:
-			if ((self.permissions == "1100") or (self.permissions == "1110") or (self.permissions == "1111")):
-				self.content = newContent
-				self.datatype = NewDataType
-			else:
-				print "I have no permissions to write this Memory Unit"
+			print "I have no permissions to write this Memory Unit"
 
 	#Changes the permissions for the MU
 	def chmod(self, who, newPermissions):
@@ -54,6 +52,27 @@ class MU:
 		else:
 			print "You don't have enough rights to do this!"
 
+
+# Controller Class, It's the master class, control everything
+class CC:
+	def __init__(self):
+		# La memoria es un diccionario de Unidades de Memoria (MU)
+		self.memory = {}
+
+	def append(self, name, memUnit):
+		# Intento crearlo en la memoria local
+		if len(self.memory) < _MEMORYSIZE:
+			self.memory[name]=memUnit
+		else:
+			# si la memoria esta llena pido al todos los nodos conectados disponibilidad de memoria
+			pass
+
+	def createMemUnit(self, who, name):
+		if len(self.memory) < _MEMORYSIZE:
+			newMemUnit = MU()
+			newMemUnit.owner = who;
+			self.memory[name]=newMemUnit
+		pass
 
 #-------------------------------------------------------------------------------------------
 
