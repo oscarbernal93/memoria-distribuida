@@ -112,6 +112,8 @@ def startServer():
 	peerSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(servData)
 	#aqui se inicializan los hilos petition y listening
+	tpet = threading.Thread(target=petitionThread)
+	tlist = threading.Thread(target=listeningThread)
 
 # Cada nodo debe tener espacios de memoria disponibles (paginas) 
 # a los que cada uno de los nodos podra acceder de manera 
