@@ -16,7 +16,7 @@ class MU:
 
 	#Returns the content to the user which asked for it, depending on the permissions granted for "who"
 	def read(self, who):
-		if who != "127.0.0.1":
+		if who != self.owner:
 			if ((self.permissions == "1110") or (self.permissions == "1011") or (self.permissions == "1010")):
 				return self.content
 			else:
@@ -26,7 +26,7 @@ class MU:
 
 	#Changes the content of the MU depending on the permissions granted for "who"
 	def write(self, who, datatype, content):
-		if who != "127.0.0.1":
+		if who != self.owner:
 			if ((self.permissions == "1011") or (self.permissions == "1111")):
 				self.content = content
 			else:
@@ -38,7 +38,7 @@ class MU:
 				print "I have no permissions to write this Memory Unit"
 
 	def chmod(self, who, newPermissions):
-		if who == "127.0.0.1":
+		if who == self.owner:
 			self.permissions = newPermissions
 		else:
 			print "You don't have enough rights to do this!"
