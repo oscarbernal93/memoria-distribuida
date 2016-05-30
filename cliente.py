@@ -71,20 +71,20 @@ opciones = {
 # - Cada nodo crear una pagina en su propia memoria
 
 def menu():
-	print "Esto es lo que puede hacer aqui:"
+	print "These are the options that you have access:"
 	for opcion in opciones:
 		print opcion, " - ", opciones[opcion]
 
-	print "\nPor favor seleccione la opcion que mas le apetezca"
+	print "\nPlease select an option"
 	variable = int(raw_input(">>> "))
 	if variable in opciones:
 		return variable
 	else:
-		print "Posiblemente algo este mal con su teclado"
-		print "Aparetemente ha escogido una opcion incorrecta"
+		print "Possibly something is wrong with your keyboard"
+		print "Apparently you chose a wrong option"
 		menu()
 
-print "hola, este es el cliente de memoria distribuida"
-print "realmente usted no sabe donde ni como se almacena la info"
+print "Hello, This is the Distributed Memory Client"
+print "You don't know how or where the info is stored"
 opcion = menu()
-print ("usted escogio: " + opciones[opcion])
+print ("You choose: " + opciones[opcion])
