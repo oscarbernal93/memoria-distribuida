@@ -6,7 +6,7 @@ import string
 
 # Definicion de Variables Globales
 _MEMORYSIZE = 1										#The max size of the memory
-_PRIVATEPORT = 12838								#Port to manage the private conection
+_PRIVATEPORT = 12836								#Port to manage the private conection
 _PUBLICCONECTION = ("<broadcast>",12835)			#Tuple with Host for Multicast Messaging
 _PRIVATECONECTION = ("",_PRIVATEPORT)				#Tuple with Host Information, useful for the "UDP sending code" reading
 _DATASIZE = 2048									#Size of data 
@@ -33,7 +33,6 @@ class MU:
 		self.permissions = "1110"
 		self.owner = _LOCALIP
 		self.accesses = []
-		self.restrictions = []
 
 	def __str__(self):
 		return "{"+"owner:"+self.owner+","+"datatype:"+self.datatype+","+"content:"+self.content+"}"
@@ -51,9 +50,11 @@ class MU:
 			if (self.permissions[3] == "1"):
 				self.content = newContent
 				self.datatype = NewDataType
+				return self
 		elif (self.permissions[1] == "1"):
 			self.content = newContent
 			self.datatype = NewDataType
+			return self;
 
 	#Changes the permissions for the MU
 	def chmod(self, who, newPermissions):
@@ -121,6 +122,30 @@ class CC:
 			pass
 		else:
 			return str(lr)
+	def local_write(self,who, name, datatype, content):
+		if name in self.memory:
+			return self.memory[name].write(who, datatype, content)
+		else:
+			return None
+	def write(self, name, datatype, content):
+		# write the var to local if is possible
+		lw = self.local_write(_LOCALIP,name,datatype,content)
+		if lw is None:
+			#if the variable name isn't in the local memory ask in the broadcast
+			sent = publicSocket.sendto("wr1t3v4rpl0xz_"+str(_PRIVATEPORT)+"_"+name+"_"+datatype+"_"+content, _PUBLICCONECTION)
+			recieved = ''
+			try:
+				recieved, node = privateSocket.recvfrom(_DATASIZE)
+			except Exception, e:
+				pass
+			if recieved != '':
+				# Somebody have the data
+				return recieved
+			else:
+				return None;
+			pass
+		else:
+			return str(lw)
 
 #-------------------------------------------------------------------------------------------
 
@@ -136,7 +161,8 @@ optionsList = {
 # Messages Codes:
 # 1n33dm3msp4c3 = the sender need space in the memory
 # 1h4v3m3msp4c3 = the sender have space in the memory
-# r34dv4rpl34s3 = the sender need to read a memory
+# r34dv4rpl34s3 = the sender need to read a memory unit
+# wr1t3v4rpl0xz = the sender need to write to a memory unit
 
 def listeningThread():
 	while True:
@@ -167,6 +193,15 @@ def listeningThread():
 			# if the var is in the local mem
 			if lr is not None:
 				privateSocket.sendto(str(lr),sender)
+		if data == 'wr1t3v4rpl0xz':
+		# this mesage have some extra parameters
+			varname = recieved[2]
+			datatype = recieved[3]
+			content = recieved[4]
+			lw = master.local_write(sender[0],varname, datatype, content);
+			# if the var is in the local mem
+			if lw is not None:
+				privateSocket.sendto(str(lw),sender)
 				
 
 # Devuelve la seleccion hecha en un menu de opciones
