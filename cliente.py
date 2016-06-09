@@ -54,12 +54,13 @@ class MU:
 		elif (self.permissions[1] == "1"):
 			self.content = newContent
 			self.datatype = NewDataType
-			return self;
+			return self
 
 	#Changes the permissions for the MU
 	def chmod(self, who, newPermissions):
 		if who == self.owner:
 			self.permissions = newPermissions
+			return self
 
 # Controller Class, It's the master class, control everything
 class CC:
