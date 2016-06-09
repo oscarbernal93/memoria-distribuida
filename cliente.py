@@ -35,7 +35,7 @@ class MU:
 		self.accesses = []
 
 	def __str__(self):
-		return "{"+"owner:"+self.owner+","+"datatype:"+self.datatype+","+"content:"+self.content+"}"
+		return "{"+"owner:"+self.owner+","+"permissions:"+self.permissions+","+"datatype:"+self.datatype+","+"content:"+self.content+"}"
 	#Returns the content to the user which asked for it, depending on the permissions granted for "who"
 	def read(self, who):
 		if who != self.owner:
@@ -146,6 +146,30 @@ class CC:
 			pass
 		else:
 			return str(lw)
+	def local_chmod(self,who, name, permissions):
+		if name in self.memory:
+			return self.memory[name].chmod(who, permissions)
+		else:
+			return None
+	def chmod(self, name, permissions):
+		# write the var to local if is possible
+		lc = self.local_chmod(_LOCALIP,name,permissions)
+		if lc is None:
+			#if the variable name isn't in the local memory ask in the broadcast
+			sent = publicSocket.sendto("chm0dv4rpl0xz_"+str(_PRIVATEPORT)+"_"+name+"_"+permissions, _PUBLICCONECTION)
+			recieved = ''
+			try:
+				recieved, node = privateSocket.recvfrom(_DATASIZE)
+			except Exception, e:
+				pass
+			if recieved != '':
+				# Somebody have the data
+				return recieved
+			else:
+				return None;
+			pass
+		else:
+			return str(lc)
 
 #-------------------------------------------------------------------------------------------
 
@@ -163,6 +187,7 @@ optionsList = {
 # 1h4v3m3msp4c3 = the sender have space in the memory
 # r34dv4rpl34s3 = the sender need to read a memory unit
 # wr1t3v4rpl0xz = the sender need to write to a memory unit
+# chm0dv4rpl0xz = the sender need to change permissions to a memory unit
 
 def listeningThread():
 	while True:
@@ -202,6 +227,14 @@ def listeningThread():
 			# if the var is in the local mem
 			if lw is not None:
 				privateSocket.sendto(str(lw),sender)
+		if data == 'chm0dv4rpl0xz':
+		# this mesage have some extra parameters
+			varname = recieved[2]
+			permissions = recieved[3]
+			lc = master.local_chmod(sender[0],varname, permissions);
+			# if the var is in the local mem
+			if lc is not None:
+				privateSocket.sendto(str(lc),sender)
 				
 
 # Devuelve la seleccion hecha en un menu de opciones
@@ -270,7 +303,19 @@ while True:
 			print "new content of the variable: "+mu
 	if option == 3:
 		#ChMod
-		pass
+		print "\nPlease write the variable name"
+		name = raw_input(">>> ")
+		print "\nPlease write the new permissions (rwrw)"
+		permissions = raw_input(">>> ")
+		pattern = re.compile("^1[0-1]{3}$")
+		if not pattern.match(permissions):
+			print "Incorrect permissions format"
+		else:
+			mu = master.chmod(name,permissions)
+			if mu is None:
+				print "The selected variable is inaccessible"
+			else:
+				print "new status of the variable: "+mu
 	if option == 4:
 		#Create Data
 		print "\nPlease write the variable name"
