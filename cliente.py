@@ -133,17 +133,12 @@ class CC:
 		if lw is None:
 			#if the variable name isn't in the local memory ask in the broadcast
 			sent = publicSocket.sendto("wr1t3v4rpl0xz_"+str(_PRIVATEPORT)+"_"+name+"_"+datatype+"_"+content, _PUBLICCONECTION)
-			recieved = ''
+			recieved = None
 			try:
 				recieved, node = privateSocket.recvfrom(_DATASIZE)
 			except Exception, e:
 				pass
-			if recieved != '':
-				# Somebody have the data
-				return recieved
-			else:
-				return None;
-			pass
+			return recieved;
 		else:
 			return str(lw)
 	def local_chmod(self,who, name, permissions):
@@ -157,17 +152,12 @@ class CC:
 		if lc is None:
 			#if the variable name isn't in the local memory ask in the broadcast
 			sent = publicSocket.sendto("chm0dv4rpl0xz_"+str(_PRIVATEPORT)+"_"+name+"_"+permissions, _PUBLICCONECTION)
-			recieved = ''
+			recieved = None
 			try:
 				recieved, node = privateSocket.recvfrom(_DATASIZE)
 			except Exception, e:
 				pass
-			if recieved != '':
-				# Somebody have the data
-				return recieved
-			else:
-				return None;
-			pass
+			return recieved;
 		else:
 			return str(lc)
 
